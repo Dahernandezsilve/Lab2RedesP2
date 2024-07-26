@@ -1,4 +1,4 @@
-def paridad_hamming(mensaje):
+def paridadHamming(mensaje):
 
     m = len(mensaje)
     r = 1
@@ -22,6 +22,7 @@ def paridad_hamming(mensaje):
 
     return ''.join(mensaje_extendido)
 
-mensaje = input("Ingrese el mensaje a codificar: ")
-mensaje_codificado = paridad_hamming(mensaje)
-print(f"Mensaje codificado con Hamming: {mensaje_codificado}")
+#mensaje = input("Ingrese el mensaje a codificar: ")
+#mensaje_codificado = paridadHamming(mensaje)
+#print(f"Mensaje codificado con Hamming: {mensaje_codificado}")
+

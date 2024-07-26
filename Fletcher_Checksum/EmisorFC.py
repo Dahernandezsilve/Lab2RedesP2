@@ -60,14 +60,12 @@ def add_checksum_to_message(data: str, block_size: int) -> str:
     message_with_checksum = padded_data + checksum_bin
     return message_with_checksum, checksum_bin, padding_length
 
-def main():
+def calculateFletcherChecksum(message):
     print("📡 --- Emisor ---")
-    message = input("🔠 Ingrese el mensaje binario: ")
     block_size = int(input("📏 Ingrese el tamaño del bloque (8, 16, o 32): "))
     
     message_with_checksum, checksum_bin, padding_length = add_checksum_to_message(message, block_size)
     print(f"📜 Mensaje con checksum: {message_with_checksum}")
     print(f"🔍 Checksum en binario: {checksum_bin}")
 
-if __name__ == "__main__":
-    main()
+    return message_with_checksum, checksum_bin, padding_length, block_size
