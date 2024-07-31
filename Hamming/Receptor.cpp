@@ -60,10 +60,8 @@ vector<int> extractOriginalMessage(const vector<int>& hammingCode) {
     return originalMessage;
 }
 
-int main() {
-    string input;
-    cout << "Ingrese el mensaje binario con los bits de paridad generados por el emisor: 📥 ";
-    cin >> input;
+string corregirHamming(const string& input) {
+    cout << "Mensaje recibido. ✅" << endl;
 
     vector<int> hammingCode(input.size());
     for (size_t i = 0; i < input.size(); i++) {
@@ -73,14 +71,10 @@ int main() {
     // Detectar y corregir errores 🕵️‍♂️
     auto [correctedCode, errorPositions] = detectAndCorrectErrors(hammingCode);
 
+    vector<int> originalMessage;
     if (errorPositions.empty()) {
         cout << "No se detectaron errores. ✅" << endl;
-        vector<int> originalMessage = extractOriginalMessage(correctedCode);
-        cout << "Mensaje original: ";
-        for (int bit : originalMessage) {
-            cout << bit;
-        }
-        cout << endl;
+        originalMessage = extractOriginalMessage(correctedCode);
     } else if (errorPositions.size() == 1) {
         cout << "Se detectaron y corrigieron errores. 🔄" << endl;
         cout << "Posición del bit a corregir: " << errorPositions[0] << endl;
@@ -89,15 +83,40 @@ int main() {
             cout << bit;
         }
         cout << endl;
-        vector<int> originalMessage = extractOriginalMessage(correctedCode);
-        cout << "Mensaje corregido: ";
-        for (int bit : originalMessage) {
-            cout << bit;
-        }
-        cout << endl;
+        originalMessage = extractOriginalMessage(correctedCode);
     } else {
         cout << "Se detectaron errores múltiples. El mensaje se descarta. ❌" << endl;
+        return ""; // Mensaje descartado
     }
 
-    return 0;
+    string asciiMessage;
+    int byte = 0;
+    int bitCount = 0;
+
+    // Convertir originalMessage de bits a ASCII
+    for (int bit : originalMessage) {
+        byte = (byte << 1) | bit; // Desplazar byte a la izquierda y añadir el nuevo bit
+        bitCount++;
+
+        // Si hemos recogido 8 bits, convertir a carácter ASCII
+        if (bitCount == 8) {
+            asciiMessage += static_cast<char>(byte); // Convertir a char y añadir al mensaje
+            byte = 0; // Reiniciar byte
+            bitCount = 0; // Reiniciar contador de bits
+        }
+    }
+
+    // En caso de que haya bits sobrantes que no formen un byte completo
+    if (bitCount > 0) {
+        // Si hay menos de 8 bits, no se puede formar un byte completo
+        cout << "Bits sobrantes que no forman un byte completo: ";
+        for (int i = 0; i < bitCount; i++) {
+            cout << originalMessage[originalMessage.size() - bitCount + i];
+        }
+        cout << endl;
+    }
+
+    cout << "Mensaje ASCII corregido: " << asciiMessage << endl;
+
+    return asciiMessage; // Retorna el mensaje corregido
 }

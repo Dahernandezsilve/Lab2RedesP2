@@ -23,8 +23,14 @@ def solicitarMensaje():
 
 
 def codificarMensaje(mensaje):
-    return ''.join(format(ord(c), '08b') for c in mensaje)
+    # Convertir a binario
+    mensaje_binario = ''.join(format(ord(c), '08b') for c in mensaje)
 
+    # Rellenar con ceros si no es múltiplo de 8
+    while len(mensaje_binario) % 8 != 0:
+        mensaje_binario += '0'
+
+    return mensaje_binario
 
 def aplicarRuido(data, probabilidad_error):
     noisyData = []
@@ -46,11 +52,11 @@ def calcularIntegridad(mensaje, algoritmo):
     if algoritmo == "Fletcher":
         messageWithChecksum, checksumBin, paddingLength, blockSize = EmisorFC.calculateFletcherChecksum(mensaje)
         print(f"🔎  Mensaje codificado con Fletcher Checksum: {messageWithChecksum}")
-        return messageWithChecksum
+        return messageWithChecksum, algoritmo
     elif algoritmo == "Hamming":
         mensajeCodificado = EmisorH.paridadHamming(mensaje)
         print(f"🥓  Mensaje codificado con Hamming: {mensajeCodificado}")
-        return mensajeCodificado
+        return mensajeCodificado, algoritmo
     else:
         print("🚨  Algoritmo no soportado")
 
@@ -58,8 +64,9 @@ def calcularIntegridad(mensaje, algoritmo):
 if __name__ == "__main__":
     mensaje, algoritmo = solicitarMensaje()
     mensajeBinario = codificarMensaje(mensaje)
-    mensajeConIntegridad = calcularIntegridad(mensajeBinario, algoritmo)
-    mensajeConRuido = aplicarRuido(mensajeConIntegridad, 0.01)  # Probabilidad de error 1%
-    enviarInformacion(mensajeConRuido, 'localhost', 12345)
+    mensajeConIntegridad, algoritmo = calcularIntegridad(mensajeBinario, algoritmo)
+    mensajeConRuido = aplicarRuido(mensajeConIntegridad, 0.00)  # Probabilidad de error 1%
+    mensaje = mensajeConRuido +';' + algoritmo
+    enviarInformacion(mensaje, 'localhost', 12345)
     print("✅  Mensaje enviado con éxito")
 

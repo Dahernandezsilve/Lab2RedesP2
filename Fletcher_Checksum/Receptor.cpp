@@ -63,16 +63,36 @@ bool verifyChecksum(const std::string &data, uint64_t receivedChecksum, int bloc
     return calculatedChecksum == receivedChecksum;
 }
 
-int main() {
+std::string convertirABinario(const std::string& mensajeBits) {
+    std::string asciiMessage;
+    int byte = 0;
+    int bitCount = 0;
+
+    // Convertir el mensaje en bits a ASCII
+    for (char bit : mensajeBits) {
+        byte = (byte << 1) | (bit - '0'); // Desplazar byte a la izquierda y añadir el nuevo bit
+        bitCount++;
+
+        // Si hemos recogido 8 bits, convertir a carácter ASCII
+        if (bitCount == 8) {
+            asciiMessage += static_cast<char>(byte); // Convertir a char y añadir al mensaje
+            byte = 0; // Reiniciar byte
+            bitCount = 0; // Reiniciar contador de bits
+        }
+    }
+
+    return asciiMessage; // Retorna el mensaje ASCII
+}
+
+
+int verificarFletcherChecksum(const std::string& receivedMessage) {
     std::cout << "\n📡 --- Receptor ---" << std::endl;
-    std::string receivedMessage;
-    std::cout << "🔠 Ingrese el mensaje binario con el checksum: ";
-    std::cin >> receivedMessage;
+
     int blockSize;
     std::cout << "📏 Ingrese el tamaño del bloque (8, 16, o 32): ";
     std::cin >> blockSize;
     
-    int checksumBits = blockSize == 8 ? 16 : blockSize == 16 ? 32 : 64;
+    int checksumBits = (blockSize == 8) ? 16 : (blockSize == 16) ? 32 : 64;
     std::string originalMessage = extractOriginalMessage(receivedMessage, checksumBits);
     uint64_t receivedChecksum = extractChecksum(receivedMessage, checksumBits);
     
@@ -80,10 +100,14 @@ int main() {
     
     if (isValid) {
         std::cout << "✅ No se detectaron errores." << std::endl;
-        std::cout << "📩 Mensaje original: " << originalMessage << std::endl;
+        
+        // Convertir el mensaje original a ASCII
+        std::string asciiMessage = convertirABinario(originalMessage);
+        std::cout << "📩 Mensaje original (ASCII): " << asciiMessage << std::endl;
+        
+        return 1;
     } else {
         std::cout << "Se detectaron errores en el mensaje. Se descarta el mensaje ❌" << std::endl;
+        return 0;
     }
-    
-    return 0;
 }

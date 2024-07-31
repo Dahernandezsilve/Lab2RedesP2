@@ -1,4 +1,7 @@
 def paridadHamming(mensaje):
+    # Asegurarse de que la longitud del mensaje sea un múltiplo de 8
+    while len(mensaje) % 8 != 0:
+        mensaje += '0'  # Agregar ceros al final
 
     m = len(mensaje)
     r = 1
@@ -22,7 +25,7 @@ def paridadHamming(mensaje):
 
     return ''.join(mensaje_extendido)
 
-#mensaje = input("Ingrese el mensaje a codificar: ")
-#mensaje_codificado = paridadHamming(mensaje)
-#print(f"Mensaje codificado con Hamming: {mensaje_codificado}")
-
+# Ejemplo de uso
+# mensaje = input("Ingrese el mensaje a codificar: ")
+# mensaje_codificado = paridadHamming(mensaje)
+# print(f"Mensaje codificado con Hamming: {mensaje_codificado}")
