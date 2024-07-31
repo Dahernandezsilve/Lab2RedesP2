@@ -3,7 +3,9 @@
 #include <bitset>
 #include <cstdint>
 
-uint16_t fletcher8(const std::string &data) {
+using namespace std;
+
+uint16_t fletcher8(const string &data) {
     uint16_t sum1 = 0;
     uint16_t sum2 = 0;
     
@@ -15,7 +17,7 @@ uint16_t fletcher8(const std::string &data) {
     return (sum2 << 8) | sum1;
 }
 
-uint32_t fletcher16(const std::string &data) {
+uint32_t fletcher16(const string &data) {
     uint32_t sum1 = 0;
     uint32_t sum2 = 0;
     
@@ -27,7 +29,7 @@ uint32_t fletcher16(const std::string &data) {
     return (sum2 << 16) | sum1;
 }
 
-uint64_t fletcher32(const std::string &data) {
+uint64_t fletcher32(const string &data) {
     uint64_t sum1 = 0;
     uint64_t sum2 = 0;
     
@@ -39,16 +41,16 @@ uint64_t fletcher32(const std::string &data) {
     return (sum2 << 32) | sum1;
 }
 
-std::string extractOriginalMessage(const std::string &data, int checksumBits) {
+string extractOriginalMessage(const string &data, int checksumBits) {
     return data.substr(0, data.size() - checksumBits);
 }
 
-uint64_t extractChecksum(const std::string &data, int checksumBits) {
-    std::string checksumBin = data.substr(data.size() - checksumBits);
-    return std::bitset<64>(checksumBin).to_ullong();
+uint64_t extractChecksum(const string &data, int checksumBits) {
+    string checksumBin = data.substr(data.size() - checksumBits);
+    return bitset<64>(checksumBin).to_ullong();
 }
 
-bool verifyChecksum(const std::string &data, uint64_t receivedChecksum, int blockSize) {
+bool verifyChecksum(const string &data, uint64_t receivedChecksum, int blockSize) {
     uint64_t calculatedChecksum;
     if (blockSize == 8) {
         calculatedChecksum = fletcher8(data);
@@ -57,57 +59,49 @@ bool verifyChecksum(const std::string &data, uint64_t receivedChecksum, int bloc
     } else if (blockSize == 32) {
         calculatedChecksum = fletcher32(data);
     } else {
-        throw std::invalid_argument("Unsupported block size");
+        throw invalid_argument("Unsupported block size");
     }
     
     return calculatedChecksum == receivedChecksum;
 }
 
-std::string convertirABinario(const std::string& mensajeBits) {
-    std::string asciiMessage;
+string convertirABinario(const string& mensajeBits) {
+    string asciiMessage;
     int byte = 0;
     int bitCount = 0;
 
-    // Convertir el mensaje en bits a ASCII
     for (char bit : mensajeBits) {
-        byte = (byte << 1) | (bit - '0'); // Desplazar byte a la izquierda y añadir el nuevo bit
+        byte = (byte << 1) | (bit - '0');
         bitCount++;
 
-        // Si hemos recogido 8 bits, convertir a carácter ASCII
         if (bitCount == 8) {
-            asciiMessage += static_cast<char>(byte); // Convertir a char y añadir al mensaje
-            byte = 0; // Reiniciar byte
-            bitCount = 0; // Reiniciar contador de bits
+            asciiMessage += static_cast<char>(byte);
+            byte = 0;
+            bitCount = 0;
         }
     }
 
-    return asciiMessage; // Retorna el mensaje ASCII
+    return asciiMessage;
 }
 
+int verificarFletcherChecksum(const string& receivedMessage, int blockSize) {
+    cout << "\n📡 --- Receptor ---" << endl;
 
-int verificarFletcherChecksum(const std::string& receivedMessage) {
-    std::cout << "\n📡 --- Receptor ---" << std::endl;
-
-    int blockSize;
-    std::cout << "📏 Ingrese el tamaño del bloque (8, 16, o 32): ";
-    std::cin >> blockSize;
-    
     int checksumBits = (blockSize == 8) ? 16 : (blockSize == 16) ? 32 : 64;
-    std::string originalMessage = extractOriginalMessage(receivedMessage, checksumBits);
+    string originalMessage = extractOriginalMessage(receivedMessage, checksumBits);
     uint64_t receivedChecksum = extractChecksum(receivedMessage, checksumBits);
     
     bool isValid = verifyChecksum(originalMessage, receivedChecksum, blockSize);
     
     if (isValid) {
-        std::cout << "✅ No se detectaron errores." << std::endl;
+        cout << "✅ No se detectaron errores." << endl;
         
-        // Convertir el mensaje original a ASCII
-        std::string asciiMessage = convertirABinario(originalMessage);
-        std::cout << "📩 Mensaje original (ASCII): " << asciiMessage << std::endl;
+        string asciiMessage = convertirABinario(originalMessage);
+        cout << "📩 Mensaje original (ASCII): " << asciiMessage << endl;
         
         return 1;
     } else {
-        std::cout << "Se detectaron errores en el mensaje. Se descarta el mensaje ❌" << std::endl;
+        cout << "Se detectaron errores en el mensaje. Se descarta el mensaje ❌" << endl;
         return 0;
     }
 }

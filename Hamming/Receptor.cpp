@@ -60,7 +60,7 @@ vector<int> extractOriginalMessage(const vector<int>& hammingCode) {
     return originalMessage;
 }
 
-string corregirHamming(const string& input) {
+pair<string, string> corregirHamming(const string& input) {
     cout << "Mensaje recibido. ✅" << endl;
 
     vector<int> hammingCode(input.size());
@@ -70,10 +70,12 @@ string corregirHamming(const string& input) {
 
     // Detectar y corregir errores 🕵️‍♂️
     auto [correctedCode, errorPositions] = detectAndCorrectErrors(hammingCode);
+    string estado; // Indicador de estado
 
     vector<int> originalMessage;
     if (errorPositions.empty()) {
         cout << "No se detectaron errores. ✅" << endl;
+        estado = "✅ Mensaje recibido sin errores";
         originalMessage = extractOriginalMessage(correctedCode);
     } else if (errorPositions.size() == 1) {
         cout << "Se detectaron y corrigieron errores. 🔄" << endl;
@@ -83,10 +85,12 @@ string corregirHamming(const string& input) {
             cout << bit;
         }
         cout << endl;
+        estado = "✍️ Mensaje corregido.";
         originalMessage = extractOriginalMessage(correctedCode);
     } else {
         cout << "Se detectaron errores múltiples. El mensaje se descarta. ❌" << endl;
-        return ""; // Mensaje descartado
+        estado = "🚨 Mensaje descartado."; // Mensaje descartado
+        return {"", estado}; // Retornar mensaje vacío y estado
     }
 
     string asciiMessage;
@@ -118,5 +122,5 @@ string corregirHamming(const string& input) {
 
     cout << "Mensaje ASCII corregido: " << asciiMessage << endl;
 
-    return asciiMessage; // Retorna el mensaje corregido
+    return {asciiMessage, estado}; // Retornar mensaje corregido y estado
 }

@@ -1,5 +1,4 @@
 def paridadHamming(mensaje):
-    # Asegurarse de que la longitud del mensaje sea un múltiplo de 8
     while len(mensaje) % 8 != 0:
         mensaje += '0'  # Agregar ceros al final
 
