@@ -3,7 +3,7 @@ Laboratorio 2 - Segunda parte Esquemas de detección y corrección de errores �
 
 📚 **Descripción**
 
-Esta es la continuación de laboratorio 2 en la que se implementa un sistema de comunicación cliente-servidor que permite enviar mensajes con verificación de integridad utilizando los algoritmos de checksum de Fletcher y Hamming programados anteriormente. El objetivo es asegurar la integridad de los mensajes transmitidos a través de una red, detectando y corrigiendo errores (ruido) en los datos.
+Esta es la continuación del laboratorio 2 en la que se implementa un sistema de comunicación cliente-servidor que permite enviar mensajes con verificación de integridad utilizando los algoritmos de checksum de Fletcher y Hamming programados anteriormente. El objetivo es asegurar la integridad de los mensajes transmitidos a través de una red, detectando y corrigiendo errores (ruido) en los datos.
 
 🔧 **Ejecución**
 
