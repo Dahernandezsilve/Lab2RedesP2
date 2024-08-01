@@ -25,7 +25,7 @@ Esta es la continuación de laboratorio 2 en la que se implementa un sistema de 
    - Compila y ejecuta el servidor C++.
      ```sh
      g++ -o server server.cpp
-     ./servidor
+     ./server
      ```
 
 2. 📤 **Cliente**: 
